@@ -1,4 +1,3 @@
-import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,6 +9,9 @@ import { UserModule } from './features/user/user.module';
 import { QuestionModule } from './features/question/question.module';
 import { AnswerModule } from './features/answer/answer.module';
 import { AuthModule } from './features/auth/auth.module';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+
 
 @Module({
   imports: [
@@ -21,7 +23,18 @@ import { AuthModule } from './features/auth/auth.module';
     AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      }),
+    },
+  ],
 })
 export class AppModule {
   private readonly logger = new Logger(AppModule.name);
